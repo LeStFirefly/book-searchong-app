@@ -1,6 +1,6 @@
 import React from 'react';
 import BookContext from '../BookContext';
-
+import BookService from '../../services/BookService'
 const HOC = () => (Wrapped) => {
     return (props) => {
         return (
