@@ -11,15 +11,22 @@ const bookListError = () => {
     };
 };
 
-const getInfoAboutBook = (id) => {
+const updateSearch = (search) => {
     return {
-        type: 'GET_INFO_ABOUT_BOOK',
-        payload: id
-    }
+        type: 'UPDATE_SEARCH',
+        payload: search
+    };
+};
+
+const removeBooks = () => {
+    return {
+        type: 'REMOVE_BOOKS'
+    };
 }
 
 export {
     bookListLoaded,
     bookListError,
-    getInfoAboutBook
+    updateSearch,
+    removeBooks
 }

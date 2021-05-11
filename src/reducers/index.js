@@ -1,7 +1,8 @@
 const initialState = {
-    bookList: [],
+    searchQuery: '',
+    books: [],
     loading: true,
-    error: false
+    error: false,
 }
 
 const reducer = (state = initialState, action) => {
@@ -9,9 +10,9 @@ const reducer = (state = initialState, action) => {
         case 'BOOK_LIST_LOADED':
             return {
                 ...state,
-                bookList: action.payload,
+                books: action.payload,
                 loading: false,
-                error: false
+                error: false,
             };
         case 'BOOK_LIST_ERROR':
             return {
@@ -19,10 +20,19 @@ const reducer = (state = initialState, action) => {
                 loading:false,
                 error: true
             };
-        case 'GET_INFO_ABOUT_BOOK': // скорее всего не понадобится
+        case 'UPDATE_SEARCH':
             return {
                 ...state,
+                searchQuery: action.payload,
+                loading: true,
+                error: false,
+                books: []
             };
+        case 'REMOVE_BOOKS':
+        return {
+            ...state,
+            books: [],
+        };
         default:
             return state;
     }
