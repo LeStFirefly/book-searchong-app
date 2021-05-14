@@ -18,15 +18,16 @@ const updateSearch = (search) => {
     };
 };
 
-const removeBooks = () => {
+const changePage = (page) => {
     return {
-        type: 'REMOVE_BOOKS'
-    };
+        type: 'CHANGE_PAGE',
+        payload: page
+    }
 }
 
 export {
     bookListLoaded,
     bookListError,
     updateSearch,
-    removeBooks
+    changePage
 }

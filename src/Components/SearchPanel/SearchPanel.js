@@ -1,23 +1,35 @@
 import React, {Component} from 'react';
 import { Button } from 'reactstrap';
 import { connect } from 'react-redux';
-import { updateSearch, removeBooks} from '../../actions';
+import { bookListLoaded, bookListError, updateSearch} from '../../actions';
+import HOC from '../HOC/';
 
 import './SearchPanel.sass';
 
 class SearchPanel extends Component {
     onClickSearchButton = async () => {
+        const {updateSearch} = this.props;
+
         const input = document.getElementById('searchInput');
-        await this.props.updateSearch(input.value);
-        console.log(' was up from button to'+this.props.searchQuery);
-        
+        await updateSearch(input.value);
+        await this.updateBooks();
     }
     
     onEnter = async (e) => {
+        const {updateSearch} = this.props;
+
         if (e.keyCode === 13) {
-            await this.props.updateSearch(e.target.value);
-            console.log(' was up from enter to'+this.props.searchQuery);
+            await updateSearch(e.target.value);
+            await this.updateBooks();
         }
+    }
+
+    updateBooks = () => {
+        const {BookService, searchQuery} = this.props;
+
+        BookService.getBooksByTitle(searchQuery)
+            .then(res => this.props.bookListLoaded(res))
+            .catch(() => this.props.bookListError());
     }
 
     render() {
@@ -41,13 +53,15 @@ class SearchPanel extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        searchQuery: state.searchQuery
+        books: state.books,
+        searchQuery: state.searchQuery,
     }
 }
 
 const mapDispatchToProps = {
-    updateSearch,
-    removeBooks
+    bookListLoaded,
+    bookListError,
+    updateSearch
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchPanel);
+export default HOC()(connect(mapStateToProps, mapDispatchToProps)(SearchPanel));

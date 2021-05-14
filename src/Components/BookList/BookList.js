@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import { bookListLoaded, bookListError, removeBooks, updateSearch} from '../../actions/';
 import BookListItem from '../BookListItem';
 import PaginationPanel from '../PaginationPanel';
 import Spinner from '../Spinner/';
 import Error from '../Error/';
-import HOC from '../HOC/';
 
 import './BookList.sass';
 
@@ -18,26 +16,21 @@ class BookList extends Component{
     }
 
     componentDidUpdate(prevState) {
-/*         if (this.props.searchQuery !== prevState.searchQuery) {
-            this.updateBooks();
-        } */
-        if (this.props.books !== prevState.books) {
-            this.updateBooks();
+        if (this.props.currentPage !== prevState.currentPage) {
+            this.renderBooks();
         }
     }
 
-    updateBooks = () => {
-        const {BookService, searchQuery} = this.props;
-
-        BookService.getBooksByTitle(searchQuery)
-            .then(res => this.props.bookListLoaded(res))
-            .catch(() => this.props.bookListError());
-    }
-
     renderBooks = () => {
-        const {books} = this.props;
+        const {books, currentPage} = this.props;
+        const currentBooks = books.filter( (item, index) => {
+            if (index>=(currentPage-1)*10 && index<currentPage*10) {
+                return item;
+            }
+        });
+        console.log(currentBooks);
         return(
-            books.map( (item) => {
+            currentBooks.map( (item) => {
                 let isbn = Array.isArray(item.isbn) ? item.isbn[0] : item.isbn;
                 return (
                     <BookListItem
@@ -52,7 +45,8 @@ class BookList extends Component{
 
     render() {
         const {books, loading, error, searchQuery} = this.props;
-        //console.log(books[0]);
+        console.log(books.length + 'книг найдено');
+
         if (searchQuery === '') {
             return <div>Что ищем сегодня?</div>
         }
@@ -84,15 +78,9 @@ const mapStateToProps = (state) => {
         books: state.books,
         searchQuery: state.searchQuery,
         loading: state.loading,
-        error: state.error,    
+        error: state.error,
+        currentPage: state.currentPage    
     }
 }
 
-const mapDispatchToProps = {
-    bookListLoaded,
-    bookListError,
-    removeBooks,
-    updateSearch
-}
-
-export default HOC()(connect(mapStateToProps, mapDispatchToProps)(BookList));
+export default connect(mapStateToProps, {})(BookList);
